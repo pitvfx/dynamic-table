@@ -1,12 +1,12 @@
 # Dynamic Table App
 =======================
 
-A simple database-driven web application built using FastHTML and Python.
+A simple dynamic web application built using FastHTML and Python.
 
 ## Overview
 -----------
 
-This application provides a basic CRUD (Create, Read, Update, Delete) interface for managing a clients database. The database is stored in memory using SQLite.
+This demo application provides a basic CRUD (Create, Read, Update, Delete) interface for managing a clients database. The database is stored in memory using SQLite.
 
 ## Features
 ------------
@@ -21,12 +21,11 @@ This application provides a basic CRUD (Create, Read, Update, Delete) interface 
 
 * Python 3.x
 * FastHTML
-* SQLite
 
 ## Installation
 ------------
 
-1. Clone this repository: `git clone https://github.com/your-username/clients-app.git`
+1. Clone this repository: `git clone https://github.com/pitvfx/dynamic-table.git`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Run the application: `python main.py`
 
@@ -37,7 +36,9 @@ This application provides a basic CRUD (Create, Read, Update, Delete) interface 
 2. Click on the "Clients" tab to view the list of clients
 3. Click on the "Add" button to create a new client
 4. Fill in the client information and click "Submit"
-5. Click on a client's row to view and edit their information
+5. Click on a client's cell to edit their information
+6. Click "Delete" to remove a Client from the list.
+
 
 ## Code Structure
 ----------------
