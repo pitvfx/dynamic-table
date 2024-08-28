@@ -1,0 +1,10 @@
+.sesskey
+.venv
+count.py
+*/__pycache__/*
+*.pyc
+*.pyo
+*.so
+*.swp
+*.swo
+*.zip
