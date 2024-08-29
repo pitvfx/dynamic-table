@@ -35,7 +35,7 @@ def client_column_data(_id: int, name: str, value: str, _type: str, edit: bool =
 
 
 def client_table():
-    return Form(hx_post="/", target_id="tbody", hx_swap="beforeend", id="create-form", cls="grid"), Table(Thead(Tr(Th("ID", scope="col"), Th("Name", scope="col"), Th("Address", scope="col"), Th("Email", scope="col"), Th("Action", scope="col")), create_row()), Tbody(*[client_row(client) for client in clients()], id="tbody"))
+    return Form(hx_post="/", target_id="tbody", hx_swap="beforeend", id="create-form", cls="grid"), Table(Thead(Tr(Th("ID", scope="col"), Th("Name", scope="col"), Th("Address", scope="col"), Th("Email", scope="col"), Th("Action", scope="col")), create_row()), Tbody(map(client_row, clients()), id="tbody"))
 
 
 @rt("/")

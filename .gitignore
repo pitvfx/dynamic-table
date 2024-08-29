@@ -8,3 +8,4 @@ count.py
 *.swp
 *.swo
 *.zip
+tmp.*
