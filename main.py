@@ -92,7 +92,7 @@ def get():
 @ rt("/")
 def post(client: Client):
     new_client = clients.insert(client)
-    return client_row(new_client)
+    return client_row(new_client), create_row()
 
 
 @ rt("/swap/{client_id:int}/{column_name:str}")
