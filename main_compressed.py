@@ -24,7 +24,7 @@ def post(client: Client):
     return client_row(new_client),create_row()
 @ rt("/swap/{client_id:int}/{column_name:str}")
 def post(client_id: int,column_name: str,pre_value: str):
-    return Td(Input(name=column_name,value=pre_value,hx_post=f"/update/{client_id}/{column_name}",target_id=f"client-{client_id}-{column_name}",hx_swap="outerHTML",hx_trigger="keyup[key=='Enter'] changed",),hx_vals={"pre_value": pre_value},hx_trigger="keyup[key=='Escape']",hx_swap="outerHTML",hx_post=f"/reset/{client_id}/{column_name}",id=f"client-{client_id}-{column_name}",)
+    return Td(Input(name=column_name,value=pre_value,type="email" if column_name == "email" else "text",hx_post=f"/update/{client_id}/{column_name}",target_id=f"client-{client_id}-{column_name}",hx_swap="outerHTML",hx_trigger="keyup[key=='Enter'] changed",),hx_vals={"pre_value": pre_value},hx_trigger="keyup[key=='Escape']",hx_swap="outerHTML",hx_post=f"/reset/{client_id}/{column_name}",id=f"client-{client_id}-{column_name}",)
 @ rt("/update/{client_id:int}/{column_name:str}")
 def post(client_id: int,column_name: str,client: Client):
     client.id = client_id

@@ -100,6 +100,7 @@ def post(client_id: int, column_name: str, pre_value: str):
     return Td(
         Input(name=column_name,
               value=pre_value,
+              type="email" if column_name == "email" else "text",
               hx_post=f"/update/{client_id}/{column_name}",
               target_id=f"client-{client_id}-{column_name}",
               hx_swap="outerHTML",
