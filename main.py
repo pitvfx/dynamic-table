@@ -9,9 +9,6 @@ Client = clients.dataclass()  # dataclass
 
 app, rt = fast_app(debug=True)
 
-clients.insert(Client(id=1, name="John Doe",
-               address="123 Main St", email="johndoe@me.com"))
-
 
 def create_row():
     return Tr(
