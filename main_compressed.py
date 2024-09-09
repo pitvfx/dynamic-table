@@ -1,30 +1,40 @@
 from fasthtml.common import *
-db = database(":memory:")  
-clients = db.t.clients  
-if clients not in db.t:  
-    clients.create(id=int,name=str,address=str,email=str,pk='id')
-Client = clients.dataclass()  
 app,rt = fast_app(debug=True)
-def create_row():
-    return Tr(Th("Add",scope="col"),Th(Input(type="text",name="name",required=True,form="create-form",placeholder="Name"),scope="col"),Th(Input(type="text",name="address",required=True,form="create-form",placeholder="Address"),scope="col"),Th(Input(type="email",name="email",required=True,form="create-form",placeholder="Email"),scope="col"),Th(Input(type="submit",value="Add",form="create-form"),scope="col"),id="create-row",hx_swap_oob="true")
-def client_cell(client_id: int,column_name: str,column_value: str):
-    return Td(column_value,id=f"client-{client_id}-{column_name}",hx_post=f"/swap/{client_id}/{column_name}",hx_trigger="click",hx_swap="outerHTML",hx_vals=f'{{"pre_value":"{column_value}"}}')
-def client_row(client: Client):
-    return Tr(client_cell(client.id,"id",client.id),client_cell(client.id,"name",client.name),client_cell(client.id,"address",client.address),client_cell(client.id,"email",client.email),Td(Button("Delete",hx_delete=f"/{client.id}",hx_confirm="Are you sure?",hx_swap="outerHTML",target_id=f"client-{client.id}"),),id=f"client-{client.id}")
-def client_table():
-    return Table(Thead(Tr(Th("ID",scope="col"),Th("Name",scope="col"),Th("Address",scope="col"),Th("Email",scope="col"),Th("Action",scope="col")),create_row()),Tbody(map(client_row,clients()),id="tbody"))
+db = database(":memory:")
+clients = db.t.clients
+if clients not in db.t:
+    clients.create(id=int,name=str,address=str,email=str,pk='id')
+Client = clients.dataclass()
 def create_form():
-    return Form(hx_post="/",target_id="tbody",hx_swap="beforeend",id="create-form")
-@ rt("/")
+        return Form(id="create-form", hx_post="/", hx_target="#client-list", hx_swap="beforeend")
+def create_row():
+    return Tr(Th("Add"),Th(Input(name="name",type="text",placeholder="Name",form="create-form")),Th(Input(name="address",type="text",placeholder="Address",form="create-form")),Th(Input(name="email",type="email",placeholder="Email",form="create-form")),Th(Input(type="submit",value="Add",form="create-form")),id="create-row",hx_swap_oob="true")
+def client_cell(client_id: int,column_name: str,column_value: str,edit: bool = False):
+    cell_id = f"client-{client_id}-{column_name}"
+    attributes = {"id": cell_id,"hx_swap": "outerHTML","hx_vals": {'pre_value': column_value},}
+    if edit:
+        inner_html = Input(name=column_name,value=column_value,type="email" if column_name == "email" else "text",hx_post=f"/update/{client_id}/{column_name}",target_id=cell_id,hx_swap="outerHTML",hx_trigger="keyup[key=='Enter'] changed",)
+        attributes["hx_trigger"] = "keyup[key=='Escape']"
+        attributes["hx_post"] = f"/reset/{client_id}/{column_name}"
+    else:
+        inner_html = column_value
+        attributes["hx_trigger"] = "click"
+        attributes["hx_post"] = f"/swap/{client_id}/{column_name}"
+    return Td(inner_html,**attributes)
+def client_row(client: Client):
+    return Tr(Td(client.id),client_cell(client.id,"name",client.name),client_cell(client.id,"address",client.address),client_cell(client.id,"email",client.email),Td(Button("Delete",hx_delete=f"/{client.id}",hx_confirm="Are you sure?",hx_swap="outerHTML",target_id=f"client-{client.id}"),),id=f"client-{client.id}")
+def client_table():
+    return Table(Thead(Tr(Th("ID",scope="col"),Th("Name",scope="col"),Th("Address",scope="col"),Th("Email",scope="col"),Th("Action",scope="col")),create_row()),Tbody(map(client_row,clients()),id="client-list"))
+@rt("/")
 def get():
     return Titled("Clients",create_form(),client_table())
-@ rt("/")
+@rt("/")
 def post(client: Client):
     new_client = clients.insert(client)
     return client_row(new_client),create_row()
 @ rt("/swap/{client_id:int}/{column_name:str}")
 def post(client_id: int,column_name: str,pre_value: str):
-    return Td(Input(name=column_name,value=pre_value,type="email" if column_name == "email" else "text",hx_post=f"/update/{client_id}/{column_name}",target_id=f"client-{client_id}-{column_name}",hx_swap="outerHTML",hx_trigger="keyup[key=='Enter'] changed",),hx_vals={"pre_value": pre_value},hx_trigger="keyup[key=='Escape']",hx_swap="outerHTML",hx_post=f"/reset/{client_id}/{column_name}",id=f"client-{client_id}-{column_name}",)
+    return client_cell(client_id,column_name,pre_value,edit=True)
 @ rt("/update/{client_id:int}/{column_name:str}")
 def post(client_id: int,column_name: str,client: Client):
     client.id = client_id
